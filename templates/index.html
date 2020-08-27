@@ -34,9 +34,42 @@
     <link href="https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap" rel="stylesheet">
 
 
+    <!--    ================================열고 닫기 스크립트==================================-->
+
+    <script>
+        function openClose() {
+            // id 값 post-box의 display 값이 block 이면(= 눈에 보이면)
+            if ($('#map').css('display') == 'none') {
+                // post-box를 가리고
+                $('#map').show();
+              $('#map_close').show();
+            }
+            // else {
+            //     // 아니면(눈에 보이지 않으면) post-box를 펴라
+            //     $('#map').hide();
+            // }
+        }
+
+        //닫힘 버튼을 위한 함수
+        function openClose_close() {
+            // id 값 post-box의 display 값이 block 이면(= 눈에 보이면)
+            if ($('#map').css('display') == 'block') {
+                // post-box를 가리고
+                $('#map').hide();
+                $('#map_close').hide();
+
+            }
+        }
+
+
+    </script>
+
+
     <!--    =================================지도 스크릡트==================================-->
+
     <script type="text/javascript"
-            src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=qx5wtap680"></script>
+            src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=qx5wtap680&submodules=geocoder">
+    </script>
 
 
     <script type="text/javascript">
@@ -150,9 +183,11 @@
                         <td>${title}</td>
                         <td>${review}</td>
                         <td>${rate}</td>
-                        <td>${address}</td>
+                        <td >${address}</td>
                         <td>${distance}</td>
+                        <td><input type="button" value="지도" onclick="openClose();searchAddressToCoordinate('${address}');"></td>
                         <td><input type="button" value="삭제" onclick="SomeDeleteRowFunction('${title}')"></td>
+
 
                     </tr>`;
             $("#reviews-box").append(tempHtml);
@@ -163,6 +198,15 @@
 
 
     <style type="text/css">
+
+        .menu a {
+            cursor: pointer;
+        }
+
+        .menu .hide {
+            display: none;
+        }
+
         map {
             width: 700px;
             height: 500px;
@@ -290,166 +334,6 @@
         </div>
 
 
-        <div id="map" style="width:100%;height:400px;"></div>
-
-
-
-
-
-
-
-        <script>
-
-            /**
-             * 스크립트 로드
-             * <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=YOUR_CLIENT_ID&submodules=geocoder"><\/script>
-             */
-
-            var map = new naver.maps.Map("map", {
-                center: new naver.maps.LatLng(37.3595316, 127.1052133),
-                zoom: 15,
-                mapTypeControl: true
-            });
-
-            var infoWindow = new naver.maps.InfoWindow({
-                anchorSkew: true
-            });
-
-            map.setCursor('pointer');
-
-
-
-            
-            function searchCoordinateToAddress(latlng) {
-
-                infoWindow.close();
-
-                naver.maps.Service.reverseGeocode({
-                    coords: latlng,
-                    orders: [
-                        naver.maps.Service.OrderType.ADDR,
-                        naver.maps.Service.OrderType.ROAD_ADDR
-                    ].join(',')
-                }, function (status, response) {
-                    if (status === naver.maps.Service.Status.ERROR) {
-                        if (!latlng) {
-                            return alert('ReverseGeocode Error, Please check latlng');
-                        }
-                        if (latlng.toString) {
-                            return alert('ReverseGeocode Error, latlng:' + latlng.toString());
-                        }
-                        if (latlng.x && latlng.y) {
-                            return alert('ReverseGeocode Error, x:' + latlng.x + ', y:' + latlng.y);
-                        }
-                        return alert('ReverseGeocode Error, Please check latlng');
-                    }
-
-                    var address = response.v2.address,
-                        htmlAddresses = [];
-
-                    if (address.jibunAddress !== '') {
-                        htmlAddresses.push('[지번 주소] ' + address.jibunAddress);
-                    }
-
-                    if (address.roadAddress !== '') {
-                        htmlAddresses.push('[도로명 주소] ' + address.roadAddress);
-                    }
-
-                    infoWindow.setContent([
-                        '<div style="padding:10px;min-width:200px;line-height:150%;">',
-                        '<h4 style="margin-top:5px;">검색 좌표</h4><br />',
-                        htmlAddresses.join('<br />'),
-                        '</div>'
-                    ].join('\n'));
-
-                    infoWindow.open(map, latlng);
-                });
-            }
-
-            function searchAddressToCoordinate(address) {
-                naver.maps.Service.geocode({
-                    query: address
-                }, function (status, response) {
-                    if (status === naver.maps.Service.Status.ERROR) {
-                        if (!address) {
-                            return alert('Geocode Error, Please check address');
-                        }
-                        return alert('Geocode Error, address:' + address);
-                    }
-
-                    if (response.v2.meta.totalCount === 0) {
-                        return alert('No result.');
-                    }
-
-                    var htmlAddresses = [],
-                        item = response.v2.addresses[0],
-                        point = new naver.maps.Point(item.x, item.y);
-
-                    if (item.roadAddress) {
-                        htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
-                    }
-
-                    if (item.jibunAddress) {
-                        htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
-                    }
-
-                    if (item.englishAddress) {
-                        htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
-                    }
-
-                    infoWindow.setContent([
-                        '<div style="padding:10px;min-width:200px;line-height:150%;">',
-                        '<h4 style="margin-top:5px;">검색 주소 : ' + address + '</h4><br />',
-                        htmlAddresses.join('<br />'),
-                        '</div>'
-                    ].join('\n'));
-
-                    map.setCenter(point);
-                    infoWindow.open(map, point);
-                });
-            }
-
-            function initGeocoder() {
-                if (!map.isStyleMapReady) {
-                    return;
-                }
-
-                map.addListener('click', function (e) {
-                    searchCoordinateToAddress(e.coord);
-                });
-
-                $('#address').on('keydown', function (e) {
-                    var keyCode = e.which;
-
-                    if (keyCode === 13) { // Enter Key
-                        searchAddressToCoordinate($('#address').val());
-                    }
-                });
-
-                $('#submit').on('click', function (e) {
-                    e.preventDefault();
-
-                    searchAddressToCoordinate($('#address').val());
-                });
-
-                searchAddressToCoordinate('정자동 178-1');
-            }
-
-            naver.maps.onJSContentLoaded = initGeocoder;
-            naver.maps.Event.once(map, 'init_stylemap', initGeocoder);
-
-
-        </script>
-
-
-
-
-
-
-
-
-
-
         <div class="input-group mb-3">
             <div class="input-group-prepend">
                 <span class="input-group-text">회사까지 거리</span>
@@ -491,8 +375,160 @@
             </tbody>
 
         </table>
+
+
     </div>
 
+    <!--닫기버튼 만듦-->
+    <div id="map_close" style="display:none;float: right" class="review">
+        <button onclick="openClose_close()" type="button" class="btn btn-primary" >지도닫기</button>
+    </div>
+
+    <!--지도 보여주는 공간-->
+    <div id="map" style="display:none;width:100%;height:400px;"></div>
+
+    <!--==========================script maps 고친곳===========================-->
+    <script>
+
+        /**
+         * 스크립트 로드
+         * <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=YOUR_CLIENT_ID&submodules=geocoder"><\/script>
+         */
+
+        var map = new naver.maps.Map("map", {
+            center: new naver.maps.LatLng(37.3595316, 127.1052133),
+            zoom: 15,
+            mapTypeControl: true
+        });
+
+        var infoWindow = new naver.maps.InfoWindow({
+            anchorSkew: true
+        });
+
+        map.setCursor('pointer');
+
+
+        function searchCoordinateToAddress(latlng) {
+
+            infoWindow.close();
+
+            naver.maps.Service.reverseGeocode({
+                coords: latlng,
+                orders: [
+                    naver.maps.Service.OrderType.ADDR,
+                    naver.maps.Service.OrderType.ROAD_ADDR
+                ].join(',')
+            }, function (status, response) {
+                if (status === naver.maps.Service.Status.ERROR) {
+                    if (!latlng) {
+                        return alert('ReverseGeocode Error, Please check latlng');
+                    }
+                    if (latlng.toString) {
+                        return alert('ReverseGeocode Error, latlng:' + latlng.toString());
+                    }
+                    if (latlng.x && latlng.y) {
+                        return alert('ReverseGeocode Error, x:' + latlng.x + ', y:' + latlng.y);
+                    }
+                    return alert('ReverseGeocode Error, Please check latlng');
+                }
+
+                var address = response.v2.address,
+                    htmlAddresses = [];
+
+                if (address.jibunAddress !== '') {
+                    htmlAddresses.push('[지번 주소] ' + address.jibunAddress);
+                }
+
+                if (address.roadAddress !== '') {
+                    htmlAddresses.push('[도로명 주소] ' + address.roadAddress);
+                }
+
+                infoWindow.setContent([
+                    '<div style="padding:10px;min-width:200px;line-height:150%;">',
+                    '<h4 style="margin-top:5px;">검색 좌표</h4><br />',
+                    htmlAddresses.join('<br />'),
+                    '</div>'
+                ].join('\n'));
+
+                infoWindow.open(map, latlng);
+            });
+        }
+
+        function searchAddressToCoordinate(address) {
+            naver.maps.Service.geocode({
+                query: address
+            }, function (status, response) {
+                if (status === naver.maps.Service.Status.ERROR) {
+                    if (!address) {
+                        return alert('Geocode Error, Please check address');
+                    }
+                    return alert('Geocode Error, address:' + address);
+                }
+
+                if (response.v2.meta.totalCount === 0) {
+                    return alert('No result.');
+                }
+
+                var htmlAddresses = [],
+                    item = response.v2.addresses[0],
+                    point = new naver.maps.Point(item.x, item.y);
+
+                if (item.roadAddress) {
+                    htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
+                }
+
+                if (item.jibunAddress) {
+                    htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
+                }
+
+                if (item.englishAddress) {
+                    htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
+                }
+
+                infoWindow.setContent([
+                    '<div style="padding:10px;min-width:200px;line-height:150%;">',
+                    '<h4 style="margin-top:5px;">검색 주소 : ' + address + '</h4><br />',
+                    htmlAddresses.join('<br />'),
+                    '</div>'
+                ].join('\n'));
+
+                map.setCenter(point);
+                infoWindow.open(map, point);
+            });
+        }
+
+        function initGeocoder() {
+            if (!map.isStyleMapReady) {
+                return;
+            }
+
+            map.addListener('click', function (e) {
+                searchCoordinateToAddress(e.coord);
+            });
+
+            $('#address').on('keydown', function (e) {
+                var keyCode = e.which;
+
+                if (keyCode === 13) { // Enter Key
+                    searchAddressToCoordinate($('#address').val());
+                }
+            });
+
+            $('#submit').on('click', function (e) {
+                e.preventDefault();
+
+                searchAddressToCoordinate($('#address').val());
+            });
+
+            //searchAddressToCoordinate('정자동 178-1');
+        }
+
+        naver.maps.onJSContentLoaded = initGeocoder;
+        naver.maps.Event.once(map, 'init_stylemap', initGeocoder);
+
+
+    </script>
+    <!--==========================maps 고친곳===========================-->
 
 </div>
 
