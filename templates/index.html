@@ -113,23 +113,9 @@
             let review = $("#review").val();
             let rate = $('input[name="radioTxt_rate"]:checked').val();
             let address = $("#address").val();
-            let distance = $("#distance").val();
+            let distance = map_direction()
+            //아래에서 열심히 만든 api를 붙이는 곳
 
-            // 2. 제목, 저자, 리뷰 중 하나라도 입력하지 않았을 경우 alert를 띄웁니다.
-            /*      if (title == "") {
-                      alert("제목을 입력해주세요");
-                      $("#title").focus();
-                      return;
-                  } else if (author == "") {
-                      alert("저자를 입력해주세요");
-                      $("#author").focus();
-                      return;
-                  } else if (review == "") {
-                      alert("리뷰를 입력해주세요");
-                      $("#bookReview").focus();
-                      return;
-                  }
-      */
 
             // 3. POST /review 에 저장을 요청합니다.
             $.ajax({
@@ -175,6 +161,59 @@
                 }
             })
         }
+
+
+
+        // 경로 예문을 복사해서 조정했음
+        // 각 함수에 위도와 경도 각각 밷어냄 >> 같이 밷어내는 법을 몰라서 분리시켰음
+        function map_geocode_lat() { //선생님! 함수안에 address를 먹여야하나요? ${address}로 광역변수로 아무것도 안먹여도 들어가나요?
+            //여긴 도착지 좌표구하는 Geocode
+            $.ajax({
+                type: "GET",
+                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode=" + ${address} +"&coordinate=127.1054328,37.3595963 -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" - v,
+                data: {},
+                success: function (response) {
+                    let lat = response["address"]["x"];
+                    //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
+                    // 그래서 아래에서 direction 찾을때 {도착지}에 위도 경도를 먹일 생각입니다. > 경로 api가 위도 경도를 변수로 먹어서 그렇습니다.
+                }
+            })
+        }
+        //경도를 밷어내는 같은 함수
+         function map_geocode_long() {
+            //여긴 도착지 좌표구하는 Geocode
+            $.ajax({
+                type: "GET",
+                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode=" + ${address} +"&coordinate=127.1054328,37.3595963 -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" - v,
+                data: {},
+                success: function (response) {
+                    let long = response["address"]["y"];
+                    //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
+                    // 그래서 아래에서 direction 찾을때 {도착지}에 위도 경도를 먹일 생각입니다. > 경로 api가 위도 경도를 변수로 먹어서 그렇습니다.
+                }
+            })
+        }
+
+
+
+         function map_direction() {
+            // 여긴 경로를 구하는 direction >> 아래 함수 두마리가 붙은건 도착지 주소를 먹어서, 위도 경도를 각각 밷어내기 위함
+            $.ajax({
+                type: "GET",
+                url: "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=start=14140692.5813867,4509117.0391565" +
+                     "&goal=" + map_geocode_lat() + "," + map_geocode_long() + "&option=trafast -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" -v,
+                data: {},
+                success: function (response) {
+                let distance = response["route"]["trafast"][0]["summary"]["distance"];
+                }
+            })
+         }
+
+
+
+
+
+
 
         function makeCard(rank, food_type, title, review, rate, address, distance) {
             let tempHtml = `<tr>

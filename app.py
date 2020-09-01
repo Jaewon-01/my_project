@@ -63,14 +63,7 @@ def read_reviews():
     return jsonify({'result': 'success', 'reviews': reviews})
 
 
-@app.route('/matjip', methods=["GET"])
-def get_matjip():
-    # gu_receive 라는 변수에 전달받은 구 이름을 저장합니다.
-    gu_receive = request.args.get('gu_give')
-    # 구 이름에 해당하는 모든 맛집 목록을 불러옵니다.
-    matjip_list = list(db.matjip.find({'gu': gu_receive}, {'_id': False}))
-    # matjip_list 라는 키 값에 맛집 목록을 담아 클라이언트에게 반환합니다.
-    return jsonify({'result': 'success', 'matjip_list': matjip_list})
+
 
 
 
