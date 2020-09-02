@@ -42,7 +42,7 @@
             if ($('#map').css('display') == 'none') {
                 // post-box를 가리고
                 $('#map').show();
-              $('#map_close').show();
+                $('#map_close').show();
             }
             // else {
             //     // 아니면(눈에 보이지 않으면) post-box를 펴라
@@ -79,7 +79,7 @@
             showReview();
         });
 
-        //=======================================================================
+        //삭제하는 부분 많듦================================================================
 
         function SomeDeleteRowFunction(title) {
 
@@ -113,7 +113,7 @@
             let review = $("#review").val();
             let rate = $('input[name="radioTxt_rate"]:checked').val();
             let address = $("#address").val();
-            let distance = map_direction()
+            let distance = map_direction(address);
             //아래에서 열심히 만든 api를 붙이는 곳
 
 
@@ -160,18 +160,29 @@
                     }
                 }
             })
+
         }
 
-
+        function validateLength(obj) {
+            let content = $(obj).val();
+            if (content.length > 140) {
+                alert("리뷰는 140자까지 기록할 수 있습니다.");
+                $(obj).val(content.substring(0, content.length - 1));
+            }
+        }
 
         // 경로 예문을 복사해서 조정했음
         // 각 함수에 위도와 경도 각각 밷어냄 >> 같이 밷어내는 법을 몰라서 분리시켰음
-        function map_geocode_lat() { //선생님! 함수안에 address를 먹여야하나요? ${address}로 광역변수로 아무것도 안먹여도 들어가나요?
+        function map_geocode_lat(address) { //선생님! 함수안에 address를 먹여야하나요? ${address}로 광역변수로 아무것도 안먹여도 들어가나요?
             //여긴 도착지 좌표구하는 Geocode
             $.ajax({
                 type: "GET",
-                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode=" + ${address} +"&coordinate=127.1054328,37.3595963 -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" - v,
-                data: {},
+                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode=" + address + "&coordinate=127.1054328,37.3595963 \ " +
+                    "-H X-NCP-APIGW-API-KEY-ID:qx5wtap680 \ " +
+                    "-H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" -v,
+                data : {},
+                datatype : 'json',
+                //async: false,
                 success: function (response) {
                     let lat = response["address"][0]["x"];
                     //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
@@ -180,42 +191,41 @@
             })
             return lat;
         }
+
         //경도를 밷어내는 같은 함수
-         function map_geocode_long() {
+        function map_geocode_long(address) {
             //여긴 도착지 좌표구하는 Geocode
             $.ajax({
                 type: "GET",
-                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode=" + ${address} +"&coordinate=127.1054328,37.3595963 -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" - v,
-                data: {},
+                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode=" + address + "&coordinate=127.1054328,37.3595963 -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" -v,
+                data : {},
+                datatype : 'json',
+                //async: false,
                 success: function (response) {
                     let long = response["address"][0]["y"];
                     //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
                     // 그래서 아래에서 direction 찾을때 {도착지}에 위도 경도를 먹일 생각입니다. > 경로 api가 위도 경도를 변수로 먹어서 그렇습니다.
                 }
             })
-             return long;
+            return long;
         }
 
 
-
-         function map_direction() {
+        function map_direction(address) {
             // 여긴 경로를 구하는 direction >> 아래 함수 두마리가 붙은건 도착지 주소를 먹어서, 위도 경도를 각각 밷어내기 위함
             $.ajax({
                 type: "GET",
                 url: "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=start=14140692.5813867,4509117.0391565" +
-                     "&goal=" + map_geocode_lat() + "," + map_geocode_long() + "&option=trafast -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" -v,
-                data: {},
+                    "&goal=" + map_geocode_lat(address) + "," + map_geocode_long(address) + "&option=trafast -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" -v,
+                data : {},
+                datatype : 'json',
+                async: false,
                 success: function (response) {
-                let distance = response["route"]["trafast"][0]["summary"]["distance"];
+                    let distance = response["route"]["trafast"][0]["summary"]["distance"];
                 }
             })
-             return distance;
-         }
-
-
-
-
-
+            return distance;
+        }
 
 
         function makeCard(rank, food_type, title, review, rate, address, distance) {
@@ -326,7 +336,7 @@
             </div>
             <textarea class="form-control" id="review"
                       cols="30"
-                      rows="5" placeholder="140자까지 입력할 수 있습니다." onkeyup="validateLength(this)"></textarea>
+                      rows="5" placeholder="140자까지 입력할 수 있습니다." onkeyup="validateLength(this)"> </textarea>
         </div>
 
 
@@ -408,13 +418,13 @@
             </tr>
             </thead>
 
-<!--                <tbody id="reviews-box">-->
-<!--                <tr>-->
-<!--                    <td>왕초보 8주 코딩</td>-->
-<!--                    <td>김르탄</td>-->
-<!--                    <td>역시 왕초보 코딩교육의 명가답군요. 따라하다보니 눈 깜짝할 사이에 8주가 지났습니다.</td>-->
-<!--                </tr>-->
-<!--                </tbody>-->
+            <!--                <tbody id="reviews-box">-->
+            <!--                <tr>-->
+            <!--                    <td>왕초보 8주 코딩</td>-->
+            <!--                    <td>김르탄</td>-->
+            <!--                    <td>역시 왕초보 코딩교육의 명가답군요. 따라하다보니 눈 깜짝할 사이에 8주가 지났습니다.</td>-->
+            <!--                </tr>-->
+            <!--                </tbody>-->
 
         </table>
 
@@ -423,7 +433,7 @@
 
     <!--닫기버튼 만듦-->
     <div id="map_close" style="display:none;float: right" class="review">
-        <button onclick="openClose_close()" type="button" class="btn btn-primary" >지도닫기</button>
+        <button onclick="openClose_close()" type="button" class="btn btn-primary">지도닫기</button>
     </div>
 
     <!--지도 보여주는 공간-->
