@@ -33,6 +33,12 @@
     <!-- 구글폰트 -->
     <link href="https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap" rel="stylesheet">
 
+   <!--    =================================지도 스크릡트==================================-->
+
+    <script type="text/javascript"
+            src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=qx5wtap680&submodules=geocoder">
+    </script>
+
 
     <!--    ================================열고 닫기 스크립트==================================-->
 
@@ -65,11 +71,7 @@
     </script>
 
 
-    <!--    =================================지도 스크릡트==================================-->
 
-    <script type="text/javascript"
-            src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=qx5wtap680&submodules=geocoder">
-    </script>
 
 
     <script type="text/javascript">
@@ -177,12 +179,12 @@
             //여긴 도착지 좌표구하는 Geocode
             $.ajax({
                 type: "GET",
-                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode=" + address + "&coordinate=127.1054328,37.3595963 \ " +
+                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + address + "&coordinate=127.1054328,37.3595963 \ " +
                     "-H X-NCP-APIGW-API-KEY-ID:qx5wtap680 \ " +
-                    "-H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" -v,
+                    "-H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK -v",
                 data : {},
                 datatype : 'json',
-                //async: false,
+                async: false,
                 success: function (response) {
                     let lat = response["address"][0]["x"];
                     //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
@@ -197,10 +199,10 @@
             //여긴 도착지 좌표구하는 Geocode
             $.ajax({
                 type: "GET",
-                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode=" + address + "&coordinate=127.1054328,37.3595963 -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" -v,
+                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + address + "&coordinate=127.1054328,37.3595963 -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK -v",
                 data : {},
                 datatype : 'json',
-                //async: false,
+                async: false,
                 success: function (response) {
                     let long = response["address"][0]["y"];
                     //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
@@ -215,8 +217,8 @@
             // 여긴 경로를 구하는 direction >> 아래 함수 두마리가 붙은건 도착지 주소를 먹어서, 위도 경도를 각각 밷어내기 위함
             $.ajax({
                 type: "GET",
-                url: "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=start=14140692.5813867,4509117.0391565" +
-                    "&goal=" + map_geocode_lat(address) + "," + map_geocode_long(address) + "&option=trafast -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" -v,
+                url: "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=14140692.5813867,4509117.0391565" +
+                    "&goal=" + map_geocode_lat(address) + "," + map_geocode_long(address) + "&option=trafast -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK -v",
                 data : {},
                 datatype : 'json',
                 async: false,
