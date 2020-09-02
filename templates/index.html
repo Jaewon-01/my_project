@@ -173,11 +173,12 @@
                 url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode=" + ${address} +"&coordinate=127.1054328,37.3595963 -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" - v,
                 data: {},
                 success: function (response) {
-                    let lat = response["address"]["x"];
+                    let lat = response["address"][0]["x"];
                     //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
                     // 그래서 아래에서 direction 찾을때 {도착지}에 위도 경도를 먹일 생각입니다. > 경로 api가 위도 경도를 변수로 먹어서 그렇습니다.
                 }
             })
+            return lat;
         }
         //경도를 밷어내는 같은 함수
          function map_geocode_long() {
@@ -187,11 +188,12 @@
                 url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode=" + ${address} +"&coordinate=127.1054328,37.3595963 -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK" - v,
                 data: {},
                 success: function (response) {
-                    let long = response["address"]["y"];
+                    let long = response["address"][0]["y"];
                     //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
                     // 그래서 아래에서 direction 찾을때 {도착지}에 위도 경도를 먹일 생각입니다. > 경로 api가 위도 경도를 변수로 먹어서 그렇습니다.
                 }
             })
+             return long;
         }
 
 
@@ -207,6 +209,7 @@
                 let distance = response["route"]["trafast"][0]["summary"]["distance"];
                 }
             })
+             return distance;
          }
 
 
@@ -405,13 +408,13 @@
             </tr>
             </thead>
 
-            <tbody id="reviews-box">
-            <tr>
-                <td>왕초보 8주 코딩</td>
-                <td>김르탄</td>
-                <td>역시 왕초보 코딩교육의 명가답군요. 따라하다보니 눈 깜짝할 사이에 8주가 지났습니다.</td>
-            </tr>
-            </tbody>
+<!--                <tbody id="reviews-box">-->
+<!--                <tr>-->
+<!--                    <td>왕초보 8주 코딩</td>-->
+<!--                    <td>김르탄</td>-->
+<!--                    <td>역시 왕초보 코딩교육의 명가답군요. 따라하다보니 눈 깜짝할 사이에 8주가 지났습니다.</td>-->
+<!--                </tr>-->
+<!--                </tbody>-->
 
         </table>
 
