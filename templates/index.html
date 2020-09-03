@@ -104,7 +104,6 @@
 
         //=======================================================================
         function makeReview() {
-
             // 1. 제목, 저자, 리뷰 내용을 가져옵니다.
             let rank = $("#rank").val();
             let food_type = $("#food_type").val();
@@ -113,7 +112,7 @@
             let rate = $('input[name="radioTxt_rate"]:checked').val();
             let address = $("#address").val();
             let distance = $("#distance").val();
-            //let distance = map_direction(address);
+           // let distance = map_direction(address);
             //아래에서 열심히 만든 api를 붙이는 곳
 
 
@@ -137,6 +136,8 @@
                     }
                 }
             })
+
+
         }
 
 
@@ -160,6 +161,7 @@
                     }
                 }
             })
+
 
         }
 
@@ -213,42 +215,42 @@
                 }
 
         */
-/*
-        function map_direction(address) {
-            // 여긴 경로를 구하는 direction >> 아래 함수 두마리가 붙은건 도착지 주소를 먹어서, 위도 경도를 각각 밷어내기 위함
-            naver.maps.Service.geocode({
-                query: address
-            }, function (status, response) {
-                if (status === naver.maps.Service.Status.ERROR) {
-                    if (!address) {
-                        return alert('Geocode Error, Please check address');
-                    }
-                    return alert('Geocode Error, address:' + address);
-                }
-                if (response.v2.meta.totalCount === 0) {
-                    return alert('No result.');
-                }
-                let latitude = response["v2"]["addresses"][0]["x"];
-                let longitude = response["v2"]["addresses"][0]["y"];
-                // console.log(latitude, longitude);
 
+        // function map_direction(address) {
+        //     // 여긴 경로를 구하는 direction >> 아래 함수 두마리가 붙은건 도착지 주소를 먹어서, 위도 경도를 각각 밷어내기 위함
+        //     naver.maps.Service.geocode({
+        //         query: address
+        //     }, function (status, response) {
+        //         if (status === naver.maps.Service.Status.ERROR) {
+        //             if (!address) {
+        //                 return alert('Geocode Error, Please check address');
+        //             }
+        //             return alert('Geocode Error, address:' + address);
+        //         }
+        //         if (response.v2.meta.totalCount === 0) {
+        //             return alert('No result.');
+        //         }
+        //         let latitude = response["v2"]["addresses"][0]["x"];
+        //         let longitude = response["v2"]["addresses"][0]["y"];
+        //
+        //
+        //
+        //         $.ajax({
+        //             type: "GET",
+        //             url: "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=14140692.5813867,4509117.0391565" +
+        //                 "&goal=" + latitude + "," + longitude + "&option=trafast -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK -v",
+        //             data: {},
+        //             datatype: 'json',
+        //             async: false,
+        //             success: function (response) {
+        //                 let distance = response["route"]["trafast"][0]["summary"]["distance"];
+        //                 return distance;
+        //             }
+        //         })
+        //
+        //     });
+        // }
 
-                $.ajax({
-                    type: "GET",
-                    url: "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=14140692.5813867,4509117.0391565" +
-                        "&goal=" + latitude + "," + longitude + "&option=trafast -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK -v",
-                    data: {},
-                    datatype: 'json',
-                    async: false,
-                    success: function (response) {
-                        let distance = response["route"]["trafast"][0]["summary"]["distance"];
-                        return distance;
-                    }
-                })
-
-            });
-        }
-*/
 
 
 
@@ -269,6 +271,7 @@
 
                     </tr>`;
             $("#reviews-box").append(tempHtml);
+
         }
 
 
@@ -444,13 +447,13 @@
             </tr>
             </thead>
 
-            <!--                <tbody id="reviews-box">-->
-            <!--                <tr>-->
-            <!--                    <td>왕초보 8주 코딩</td>-->
-            <!--                    <td>김르탄</td>-->
-            <!--                    <td>역시 왕초보 코딩교육의 명가답군요. 따라하다보니 눈 깜짝할 사이에 8주가 지났습니다.</td>-->
-            <!--                </tr>-->
-            <!--                </tbody>-->
+                            <tbody id="reviews-box">
+                            <tr>
+                                <td>왕초보 8주 코딩</td>
+                                <td>김르탄</td>
+                                <td>역시 왕초보 코딩교육의 명가답군요. 따라하다보니 눈 깜짝할 사이에 8주가 지났습니다.</td>
+                            </tr>
+                            </tbody>
 
         </table>
 
