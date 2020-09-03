@@ -33,7 +33,7 @@
     <!-- 구글폰트 -->
     <link href="https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap" rel="stylesheet">
 
-   <!--    =================================지도 스크릡트==================================-->
+    <!--    =================================지도 스크릡트==================================-->
 
     <script type="text/javascript"
             src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=qx5wtap680&submodules=geocoder">
@@ -69,9 +69,6 @@
 
 
     </script>
-
-
-
 
 
     <script type="text/javascript">
@@ -115,7 +112,8 @@
             let review = $("#review").val();
             let rate = $('input[name="radioTxt_rate"]:checked').val();
             let address = $("#address").val();
-            let distance = map_direction(address);
+            let distance = $("#distance").val();
+            //let distance = map_direction(address);
             //아래에서 열심히 만든 api를 붙이는 곳
 
 
@@ -173,61 +171,70 @@
             }
         }
 
-        // 경로 예문을 복사해서 조정했음
-        // 각 함수에 위도와 경도 각각 밷어냄 >> 같이 밷어내는 법을 몰라서 분리시켰음
-        function map_geocode_lat(address) { //선생님! 함수안에 address를 먹여야하나요? ${address}로 광역변수로 아무것도 안먹여도 들어가나요?
-            //여긴 도착지 좌표구하는 Geocode
-            $.ajax({
-                type: "GET",
-                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + address + "&coordinate=127.1054328,37.3595963 \ " +
-                    "-H X-NCP-APIGW-API-KEY-ID:qx5wtap680 \ " +
-                    "-H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK -v",
-                data : {},
-                datatype : 'json',
-                async: false,
-                success: function (response) {
-                    let lat = response["address"][0]["x"];
-                    //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
-                    // 그래서 아래에서 direction 찾을때 {도착지}에 위도 경도를 먹일 생각입니다. > 경로 api가 위도 경도를 변수로 먹어서 그렇습니다.
+        /*
+                // 경로 예문을 복사해서 조정했음
+                // 각 함수에 위도와 경도 각각 밷어냄 >> 같이 밷어내는 법을 몰라서 분리시켰음
+                function map_geocode_lat(address) { //선생님! 함수안에 address를 먹여야하나요? ${address}로 광역변수로 아무것도 안먹여도 들어가나요?
+                    //여긴 도착지 좌표구하는 Geocode
+                    $.ajax({
+                        type: "GET",
+                        url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + address + "&coordinate=127.1054328,37.3595963 \ " +
+                            "-H X-NCP-APIGW-API-KEY-ID:qx5wtap680 \ " +
+                            "-H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK -v",
+                        data : {},
+                        datatype : 'json',
+                        async: false,
+                        success: function (response) {
+                            let lat = response["address"][0]["x"];
+                            //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
+                            // 그래서 아래에서 direction 찾을때 {도착지}에 위도 경도를 먹일 생각입니다. > 경로 api가 위도 경도를 변수로 먹어서 그렇습니다.
+                        }
+                    })
+                    return lat;
                 }
-            })
-            return lat;
-        }
 
-        //경도를 밷어내는 같은 함수
-        function map_geocode_long(address) {
-            //여긴 도착지 좌표구하는 Geocode
-            $.ajax({
-                type: "GET",
-                url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + address + "&coordinate=127.1054328,37.3595963 -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK -v",
-                data : {},
-                datatype : 'json',
-                async: false,
-                success: function (response) {
-                    let long = response["address"][0]["y"];
-                    //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
-                    // 그래서 아래에서 direction 찾을때 {도착지}에 위도 경도를 먹일 생각입니다. > 경로 api가 위도 경도를 변수로 먹어서 그렇습니다.
+                //경도를 밷어내는 같은 함수
+                function map_geocode_long(address) {
+                    //여긴 도착지 좌표구하는 Geocode
+                    $.ajax({
+                        type: "GET",
+                        url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + address + "&coordinate=127.1054328,37.3595963 -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK -v",
+                        data : {},
+                        datatype : 'json',
+                        async: false,
+                        success: function (response) {
+                            let long = response["address"][0]["y"];
+                            //Geocode라는 api를 통해서 address가 기입되면 > 위도 경도로 x y를 뽑아냅니다
+                            // 그래서 아래에서 direction 찾을때 {도착지}에 위도 경도를 먹일 생각입니다. > 경로 api가 위도 경도를 변수로 먹어서 그렇습니다.
+                        }
+                    })
+                    return long;
                 }
-            })
-            return long;
-        }
+
+        */
 
 
-        function map_direction(address) {
-            // 여긴 경로를 구하는 direction >> 아래 함수 두마리가 붙은건 도착지 주소를 먹어서, 위도 경도를 각각 밷어내기 위함
-            $.ajax({
-                type: "GET",
-                url: "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=14140692.5813867,4509117.0391565" +
-                    "&goal=" + map_geocode_lat(address) + "," + map_geocode_long(address) + "&option=trafast -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK -v",
-                data : {},
-                datatype : 'json',
-                async: false,
-                success: function (response) {
-                    let distance = response["route"]["trafast"][0]["summary"]["distance"];
+                function map_direction(address) {
+                    // 여긴 경로를 구하는 direction >> 아래 함수 두마리가 붙은건 도착지 주소를 먹어서, 위도 경도를 각각 밷어내기 위함
+
+                    let xy_locate = searchAddressToCoordinate(address)
+
+                    let lat = xy_locate["v2"]["addresses"][0]["x"];
+                    let long = xy_locate["v2"]["addresses"][0]["y"];
+
+                    $.ajax({
+                        type: "GET",
+                        url: "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=14140692.5813867,4509117.0391565" +
+                            "&goal=" + lat + "," + long + "&option=trafast -H X-NCP-APIGW-API-KEY-ID:qx5wtap680 -H X-NCP-APIGW-API-KEY:puc1vnyKbJRyxIWMnnBZwbxaAgzQIpsXimewf2aK -v",
+                        data : {},
+                        datatype : 'json',
+                        async: false,
+                        success: function (response) {
+                            let distance = response["route"]["trafast"][0]["summary"]["distance"];
+                        }
+                    })
+                    return distance;
                 }
-            })
-            return distance;
-        }
 
 
         function makeCard(rank, food_type, title, review, rate, address, distance) {
@@ -550,6 +557,7 @@
                 infoWindow.open(map, point);
             });
         }
+
 
         function initGeocoder() {
             if (!map.isStyleMapReady) {
